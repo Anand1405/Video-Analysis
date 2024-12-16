@@ -129,12 +129,18 @@ def select_frames_clustering(frames, num_frames=20):
     return selected_frames
 
 # Select frames using Clip Model
-def select_frames_clip(clip_model, clip_processor, device, frames, num_frames=20, query_text="shoppable item"):
-    text_embedding = compute_text_embedding(clip_model, clip_processor, device, query_text)
+def select_frames_clip(clip_model, clip_processor, video_path, num_frames=20, query_text="shoppable item"):
+    cap = cv2.VideoCapture(video_path)
+    text_embedding = compute_text_embedding(query_text)
     embeddings = []
+    frames = []
 
-    for frame in frames:
-        embeddings.append(compute_clip_embedding(clip_model, clip_processor, device, frame))
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+        embeddings.append(compute_clip_embedding(frame))
+        frames.append(frame)
 
     similarities = np.array([np.dot(text_embedding, emb) / (np.linalg.norm(text_embedding) * np.linalg.norm(emb)) for emb in embeddings])
     selected_indices = similarities.argsort()[-num_frames:][::-1]
