@@ -53,7 +53,16 @@ if uploaded_file:
         
         # Display saved frames
         st.write("Extracted Frames:")
+        # Set the number of columns for the grid
+        num_columns = 3  # Adjust this value based on your preference
+
+        # Create the grid layout using st.columns
+        columns = st.columns(num_columns)
+
+        # Iterate over the frames and display them in the grid
         for idx, frame in enumerate(selected_frames):
-            st.image(frame, caption=f"Frame {idx + 1}")
+            col = columns[idx % num_columns]  # Choose the column based on the frame index
+            with col:
+                st.image(frame, caption=f"Frame {idx + 1}")
             
         
