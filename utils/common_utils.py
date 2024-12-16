@@ -21,6 +21,7 @@ def get_frames(video_path):
     cap.release()
     print("Len Frames:", len(frames))
     return frames
+
 # Convert numpy arrays to lists for JSON serialization
 def numpy_to_list(obj):
     if isinstance(obj, np.ndarray):
