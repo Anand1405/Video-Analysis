@@ -133,11 +133,52 @@ def select_frames_clip(clip_model, clip_processor, device, frames, num_frames=20
     text_embedding = compute_text_embedding(clip_model, clip_processor, device, query_text)
     embeddings = []
 
+    # Extract frames and their embeddings
     for frame in frames:
         embeddings.append(compute_clip_embedding(clip_model, clip_processor, device, frame))
 
-    similarities = np.array([np.dot(text_embedding, emb) / (np.linalg.norm(text_embedding) * np.linalg.norm(emb)) for emb in embeddings])
-    selected_indices = similarities.argsort()[-num_frames:][::-1]
-    selected_frames = [frames[i] for i in selected_indices]
+    if len(frames) == 0:
+        raise ValueError(f"No frames captured from the video. Please check the video file.")
+
+    if len(frames) <= num_frames:
+        # If fewer frames than needed, return all frames
+        return frames + [frames[-1]] * (num_frames - len(frames))
+
+    # Compute similarity scores with text embedding
+    similarities = np.array([
+        np.dot(text_embedding, emb) / (np.linalg.norm(text_embedding) * np.linalg.norm(emb))
+        for emb in embeddings
+    ])
+    
+    # Sort frames by similarity
+    sorted_indices = similarities.argsort()[::-1]
+
+    # Select top candidates for diversity selection
+    top_candidates = [embeddings[i] for i in sorted_indices[:3 * num_frames]]
+    candidate_frames = [frames[i] for i in sorted_indices[:3 * num_frames]]
+
+    # Greedy selection for diversity
+    selected_indices = [0]  # Start with the most similar frame
+    for _ in range(1, num_frames):
+        max_diversity_idx = None
+        max_diversity_score = -1
+
+        for idx, emb in enumerate(top_candidates):
+            if idx in selected_indices:
+                continue
+
+            # Calculate diversity score as the minimum distance to selected frames
+            diversity_score = min(
+                np.linalg.norm(emb - top_candidates[selected_idx]) for selected_idx in selected_indices
+            )
+
+            if diversity_score > max_diversity_score:
+                max_diversity_score = diversity_score
+                max_diversity_idx = idx
+
+        selected_indices.append(max_diversity_idx)
+
+    # Retrieve final selected frames
+    selected_frames = [candidate_frames[idx] for idx in selected_indices]
 
     return selected_frames

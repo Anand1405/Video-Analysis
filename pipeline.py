@@ -58,6 +58,7 @@ def pipe(video_path, num_frames, method_name, query_text):
     save_frames_to_directory(selected_frames, method_name)
     print(f"{len(selected_frames)} Selected Frames Saved!!!")
         
+    total = 0
     detections = []
     for curr in range(len(selected_frames)):
         image = preprocess_frame(selected_frames[curr])
@@ -69,6 +70,7 @@ def pipe(video_path, num_frames, method_name, query_text):
         draw = ImageDraw.Draw(image)
         print("Creating Bounding Box---------------")
         for currBox in range(len(result[0]['boxes'])):
+            total += 1
             box = result[0]['boxes'][currBox].cpu().numpy().astype(int)  # Convert box to numpy array and to int
             # Draw the bounding box
             draw.rectangle([box[0], box[1], box[2], box[3]], outline="blue", width=3)
@@ -79,10 +81,12 @@ def pipe(video_path, num_frames, method_name, query_text):
         print("Bounding Box Created----------------")
         detections.append(result)
 
+        
+        print(total)
         elapsed_time = time.time() - start_time
         results[method_name] = {
             "time_taken": elapsed_time,
-            "detections": len(detections),
+            "detections": total,
             "detection_boxes": [detection for detection in detections],
         }
 
