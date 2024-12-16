@@ -6,6 +6,21 @@ import time
 import os
 from PIL import Image
 
+# List of frames from video
+def get_frames(video_path):
+    frames = []
+    cap = cv2.VideoCapture(video_path)
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+        frame = cv2.resize(frame, (256, 256))
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frames.append(frame)
+        
+    cap.release()
+    print("Len Frames:", len(frames))
+    return frames
 # Convert numpy arrays to lists for JSON serialization
 def numpy_to_list(obj):
     if isinstance(obj, np.ndarray):
@@ -27,8 +42,8 @@ def detect_objects_with_grounding_dino(grounding_model, grounding_processor, dev
     results = grounding_processor.post_process_grounded_object_detection(
         outputs,
         inputs.input_ids,
-        box_threshold=0.4,
-        text_threshold=0.3,
+        box_threshold=0.2,
+        text_threshold=0.2,
         target_sizes=[image.size[::-1]]  # (height, width)
     )
     return results

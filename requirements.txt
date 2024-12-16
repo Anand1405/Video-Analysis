@@ -7,4 +7,5 @@ torchvision
 transformers
 ipywidgets
 torchvision
+torchaudio
 streamlit

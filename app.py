@@ -8,7 +8,6 @@ warnings.filterwarnings("ignore")
 
 # Streamlit UI
 st.title("Video Frame Sampling Tool")
-st.set_page_config(page_title="Video Analysis")
 st.sidebar.title("Options")
 
 # Upload video file
@@ -17,7 +16,7 @@ method_name = st.sidebar.selectbox(
     "Select Sampling Method",
     [
         "Histogram Sampling",
-        "Keyframe Detection",
+        "Deep Learning-Based Sampling",
         "CLIP-based Sampling",
         "Clustering Sampling",
     ],
@@ -48,8 +47,9 @@ if uploaded_file:
         st.write(f"Processing with {method_name}...")
         results, selected_frames = pipe(video_path, num_frames, method_name, query_text)
         st.write(f"{len(selected_frames)} frames extracted.")
-        st.write(f"Total Detections: {results[method_name]['detections']}")
-        st.write(f"Time Taken: {results[method_name]['time_taken']}")
+        if len(selected_frames) > 0:
+            st.write(f"Total Detections: {results[method_name]['detections']}")
+            st.write(f"Time Taken: {results[method_name]['time_taken']}")
         
         # Display saved frames
         st.write("Extracted Frames:")
