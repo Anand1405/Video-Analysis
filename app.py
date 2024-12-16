@@ -8,6 +8,7 @@ warnings.filterwarnings("ignore")
 
 # Streamlit UI
 st.title("Video Frame Sampling Tool")
+st.set_page_config(page_title="Video Analysis")
 st.sidebar.title("Options")
 
 # Upload video file

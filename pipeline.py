@@ -13,14 +13,12 @@ from utils.frame_extract import select_frames_histogram, select_frames_deep_lear
 # Select device for inference
 device = "cuda" if torch.cuda.is_available() else "cpu"
 # Load the CLIP model for image embeddings
-clip_model_id = "openai/clip-vit-base-patch32"
-clip_processor = CLIPProcessor.from_pretrained(clip_model_id)
-clip_model = CLIPModel.from_pretrained(clip_model_id)
+clip_processor = CLIPProcessor.from_pretrained("models/CLIP-Model/processor")
+clip_model = CLIPModel.from_pretrained("models/CLIP-Model/model")
 
 # Load the Grounding DINO model
-grounding_model_id = "IDEA-Research/grounding-dino-base"
-grounding_processor = AutoProcessor.from_pretrained(grounding_model_id)
-grounding_model = AutoModelForZeroShotObjectDetection.from_pretrained(grounding_model_id).to(device)
+grounding_processor = AutoProcessor.from_pretrained("models/Grounding-Dino-Model/processor")
+grounding_model = AutoModelForZeroShotObjectDetection.from_pretrained("models/Grounding-Dino-Model/model").to(device)
 
 # Load VGG16 model for feature extraction
 vgg_model = VGG16(weights="imagenet", include_top=False)
