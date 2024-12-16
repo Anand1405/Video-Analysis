@@ -1,0 +1,11 @@
+opencv-python-headless
+numpy
+scikit-learn
+matplotlib
+tensorflow
+torch
+torchvision
+transformers
+ipywidgets
+torchvision
+streamlit
