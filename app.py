@@ -30,7 +30,7 @@ num_frames = st.sidebar.number_input(
     step=1
 )
 
-query_text = st.sidebar.text_input("Query Text for CLIP-based Sampling", "shoppable item.")
+query_text = st.sidebar.text_input("Query Text for Object Detection", "shoppable item.")
 if not query_text.endswith("."):
     query_text = query_text + "."
 
